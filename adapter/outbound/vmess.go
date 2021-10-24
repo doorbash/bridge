@@ -9,10 +9,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/StinkyPeach/bridge/component/dialer"
-	"github.com/StinkyPeach/bridge/component/resolver"
-	"github.com/StinkyPeach/bridge/component/vmess"
-	C "github.com/StinkyPeach/bridge/constant"
+	"github.com/kooroshh/bridge/component/dialer"
+	"github.com/kooroshh/bridge/component/resolver"
+	"github.com/kooroshh/bridge/component/vmess"
+	C "github.com/kooroshh/bridge/constant"
 )
 
 type Vmess struct {

@@ -11,7 +11,7 @@ import (
 	"net"
 	"sync"
 
-	"github.com/StinkyPeach/bridge/component/socks5"
+	"github.com/kooroshh/bridge/component/socks5"
 )
 
 const (

@@ -6,12 +6,12 @@ import (
 	"net"
 	"strconv"
 
-	"github.com/Dreamacro/go-shadowsocks2/core"
-	"github.com/Dreamacro/go-shadowsocks2/shadowstream"
-	"github.com/StinkyPeach/bridge/component/dialer"
-	"github.com/StinkyPeach/bridge/component/ssr/obfs"
-	"github.com/StinkyPeach/bridge/component/ssr/protocol"
-	C "github.com/StinkyPeach/bridge/constant"
+	"github.com/kooroshh/go-shadowsocks2/core"
+	"github.com/kooroshh/go-shadowsocks2/shadowstream"
+	"github.com/kooroshh/bridge/component/dialer"
+	"github.com/kooroshh/bridge/component/ssr/obfs"
+	"github.com/kooroshh/bridge/component/ssr/protocol"
+	C "github.com/kooroshh/bridge/constant"
 )
 
 type ShadowSocksR struct {

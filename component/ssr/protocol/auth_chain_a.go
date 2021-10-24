@@ -12,9 +12,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Dreamacro/go-shadowsocks2/core"
-	"github.com/StinkyPeach/bridge/common/pool"
-	"github.com/StinkyPeach/bridge/component/ssr/tools"
+	"github.com/kooroshh/go-shadowsocks2/core"
+	"github.com/kooroshh/bridge/common/pool"
+	"github.com/kooroshh/bridge/component/ssr/tools"
 )
 
 type authChain struct {

@@ -8,8 +8,8 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/StinkyPeach/bridge/common/pool"
-	"github.com/StinkyPeach/bridge/component/ssr/tools"
+	"github.com/kooroshh/bridge/common/pool"
+	"github.com/kooroshh/bridge/component/ssr/tools"
 )
 
 type authSHA1V4 struct {

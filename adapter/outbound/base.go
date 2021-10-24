@@ -5,7 +5,7 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"errors"
-	C "github.com/StinkyPeach/bridge/constant"
+	C "github.com/kooroshh/bridge/constant"
 	"net"
 	"net/http"
 	"time"

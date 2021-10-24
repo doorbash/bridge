@@ -8,14 +8,14 @@ import (
 	"net"
 	"strconv"
 
-	"github.com/StinkyPeach/bridge/common/structure"
-	"github.com/StinkyPeach/bridge/component/dialer"
-	obfs "github.com/StinkyPeach/bridge/component/simple-obfs"
-	"github.com/StinkyPeach/bridge/component/socks5"
-	v2rayObfs "github.com/StinkyPeach/bridge/component/v2ray-plugin"
-	C "github.com/StinkyPeach/bridge/constant"
+	"github.com/kooroshh/bridge/common/structure"
+	"github.com/kooroshh/bridge/component/dialer"
+	obfs "github.com/kooroshh/bridge/component/simple-obfs"
+	"github.com/kooroshh/bridge/component/socks5"
+	v2rayObfs "github.com/kooroshh/bridge/component/v2ray-plugin"
+	C "github.com/kooroshh/bridge/constant"
 
-	"github.com/Dreamacro/go-shadowsocks2/core"
+	"github.com/kooroshh/go-shadowsocks2/core"
 )
 
 type ShadowSocks struct {

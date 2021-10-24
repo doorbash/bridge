@@ -5,7 +5,7 @@ import (
 	"errors"
 	"net"
 
-	"github.com/StinkyPeach/bridge/component/resolver"
+	"github.com/kooroshh/bridge/component/resolver"
 )
 
 func Dialer() (*net.Dialer, error) {

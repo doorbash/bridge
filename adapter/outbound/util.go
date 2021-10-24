@@ -10,8 +10,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/StinkyPeach/bridge/component/resolver"
-	C "github.com/StinkyPeach/bridge/constant"
+	"github.com/kooroshh/bridge/component/resolver"
+	C "github.com/kooroshh/bridge/constant"
 )
 
 const (

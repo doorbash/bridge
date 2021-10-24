@@ -10,9 +10,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/StinkyPeach/bridge/common/pool"
-	"github.com/StinkyPeach/bridge/component/ssr/tools"
-	"github.com/StinkyPeach/bridge/log"
+	"github.com/kooroshh/bridge/common/pool"
+	"github.com/kooroshh/bridge/component/ssr/tools"
+	"github.com/kooroshh/bridge/log"
 )
 
 type tlsAuthData struct {

@@ -5,7 +5,7 @@ import (
 	"net"
 	"strings"
 
-	"github.com/StinkyPeach/bridge/component/trie"
+	"github.com/kooroshh/bridge/component/trie"
 )
 
 var (

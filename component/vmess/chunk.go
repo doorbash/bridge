@@ -5,7 +5,7 @@ import (
 	"errors"
 	"io"
 
-	"github.com/StinkyPeach/bridge/common/pool"
+	"github.com/kooroshh/bridge/common/pool"
 )
 
 const (

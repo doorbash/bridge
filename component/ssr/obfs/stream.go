@@ -3,7 +3,7 @@ package obfs
 import (
 	"net"
 
-	"github.com/StinkyPeach/bridge/common/pool"
+	"github.com/kooroshh/bridge/common/pool"
 )
 
 // NewConn wraps a stream-oriented net.Conn with obfs decoding/encoding

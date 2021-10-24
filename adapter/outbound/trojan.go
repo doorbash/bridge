@@ -7,9 +7,9 @@ import (
 	"net"
 	"strconv"
 
-	"github.com/StinkyPeach/bridge/component/dialer"
-	"github.com/StinkyPeach/bridge/component/trojan"
-	C "github.com/StinkyPeach/bridge/constant"
+	"github.com/kooroshh/bridge/component/dialer"
+	"github.com/kooroshh/bridge/component/trojan"
+	C "github.com/kooroshh/bridge/constant"
 )
 
 type Trojan struct {

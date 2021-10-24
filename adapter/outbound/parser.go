@@ -3,8 +3,8 @@ package outbound
 import (
 	"fmt"
 
-	"github.com/StinkyPeach/bridge/common/structure"
-	C "github.com/StinkyPeach/bridge/constant"
+	"github.com/kooroshh/bridge/common/structure"
+	C "github.com/kooroshh/bridge/constant"
 )
 
 func ParseProxy(mapping map[string]interface{}) (C.Proxy, error) {

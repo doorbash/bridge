@@ -3,7 +3,7 @@ package protocol
 import (
 	"net"
 
-	"github.com/StinkyPeach/bridge/common/pool"
+	"github.com/kooroshh/bridge/common/pool"
 )
 
 // NewPacketConn returns a net.NewPacketConn with protocol decoding/encoding

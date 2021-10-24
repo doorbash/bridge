@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/StinkyPeach/bridge/adapter/outbound"
-	"github.com/StinkyPeach/bridge/log"
+	"github.com/kooroshh/bridge/adapter/outbound"
+	"github.com/kooroshh/bridge/log"
 	"time"
 )
 
