@@ -5,7 +5,7 @@ go 1.15
 require (
 	github.com/gofrs/uuid v4.0.0+incompatible
 	github.com/gorilla/websocket v1.4.2
-	github.com/kooroshh/go-shadowsocks2 v0.1.9
+	github.com/kooroshh/go-shadowsocks2 v1.0.0
 	github.com/sirupsen/logrus v1.7.0
 	github.com/stretchr/testify v1.6.1
 	go.uber.org/atomic v1.7.0
