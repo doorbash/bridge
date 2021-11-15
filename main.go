@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/kooroshh/bridge/adapter/outbound"
-	"github.com/kooroshh/bridge/log"
+	"github.com/doorbash/bridge/adapter/outbound"
+	"github.com/doorbash/bridge/log"
 	"time"
 )
 
@@ -26,7 +26,6 @@ func main() {
 	//
 	//p, err := outbound.ParseProxy(ssrNode)
 
-
 	socks5Node := make(map[string]interface{})
 	socks5Node["name"] = "test"
 	socks5Node["type"] = "socks5"
@@ -36,7 +35,6 @@ func main() {
 	socks5Node["skip-cert-verify"] = true
 
 	p, err := outbound.ParseProxy(socks5Node)
-
 
 	if err != nil {
 		fmt.Println(err)

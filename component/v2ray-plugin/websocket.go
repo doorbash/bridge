@@ -5,7 +5,7 @@ import (
 	"net"
 	"net/http"
 
-	"github.com/kooroshh/bridge/component/vmess"
+	"github.com/doorbash/bridge/component/vmess"
 )
 
 // Option is options of websocket obfs

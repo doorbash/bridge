@@ -3,7 +3,7 @@ package protocol
 import (
 	"sort"
 
-	"github.com/kooroshh/bridge/component/ssr/tools"
+	"github.com/doorbash/bridge/component/ssr/tools"
 )
 
 func init() {

@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"net"
 
-	"github.com/kooroshh/bridge/common/pool"
+	"github.com/doorbash/bridge/common/pool"
 )
 
 // NewConn wraps a stream-oriented net.Conn with protocol decoding/encoding

@@ -10,9 +10,9 @@ import (
 	"net"
 	"strconv"
 
-	"github.com/kooroshh/bridge/component/dialer"
-	"github.com/kooroshh/bridge/component/socks5"
-	C "github.com/kooroshh/bridge/constant"
+	"github.com/doorbash/bridge/component/dialer"
+	"github.com/doorbash/bridge/component/socks5"
+	C "github.com/doorbash/bridge/constant"
 )
 
 type Socks5 struct {

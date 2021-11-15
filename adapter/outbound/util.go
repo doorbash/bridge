@@ -10,8 +10,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/kooroshh/bridge/component/resolver"
-	C "github.com/kooroshh/bridge/constant"
+	"github.com/doorbash/bridge/component/resolver"
+	C "github.com/doorbash/bridge/constant"
 )
 
 const (

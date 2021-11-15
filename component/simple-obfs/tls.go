@@ -8,7 +8,7 @@ import (
 	"net"
 	"time"
 
-	"github.com/kooroshh/bridge/common/pool"
+	"github.com/doorbash/bridge/common/pool"
 )
 
 func init() {

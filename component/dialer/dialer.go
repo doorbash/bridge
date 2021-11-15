@@ -5,7 +5,7 @@ import (
 	"errors"
 	"net"
 
-	"github.com/kooroshh/bridge/component/resolver"
+	"github.com/doorbash/bridge/component/resolver"
 )
 
 func Dialer() (*net.Dialer, error) {

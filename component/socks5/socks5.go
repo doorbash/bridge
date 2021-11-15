@@ -8,7 +8,7 @@ import (
 	"net"
 	"strconv"
 
-	"github.com/kooroshh/bridge/component/auth"
+	"github.com/doorbash/bridge/component/auth"
 )
 
 // Error represents a SOCKS error

@@ -10,9 +10,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/kooroshh/bridge/common/pool"
-	"github.com/kooroshh/bridge/component/ssr/tools"
-	"github.com/kooroshh/bridge/log"
+	"github.com/doorbash/bridge/common/pool"
+	"github.com/doorbash/bridge/component/ssr/tools"
+	"github.com/doorbash/bridge/log"
 )
 
 type tlsAuthData struct {

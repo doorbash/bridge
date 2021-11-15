@@ -8,14 +8,14 @@ import (
 	"net"
 	"strconv"
 
-	"github.com/kooroshh/bridge/common/structure"
-	"github.com/kooroshh/bridge/component/dialer"
-	obfs "github.com/kooroshh/bridge/component/simple-obfs"
-	"github.com/kooroshh/bridge/component/socks5"
-	v2rayObfs "github.com/kooroshh/bridge/component/v2ray-plugin"
-	C "github.com/kooroshh/bridge/constant"
+	"github.com/doorbash/bridge/common/structure"
+	"github.com/doorbash/bridge/component/dialer"
+	obfs "github.com/doorbash/bridge/component/simple-obfs"
+	"github.com/doorbash/bridge/component/socks5"
+	v2rayObfs "github.com/doorbash/bridge/component/v2ray-plugin"
+	C "github.com/doorbash/bridge/constant"
 
-	"github.com/kooroshh/go-shadowsocks2/core"
+	"github.com/doorbash/go-shadowsocks2/core"
 )
 
 type ShadowSocks struct {

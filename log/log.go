@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/kooroshh/bridge/common/observable"
+	"github.com/doorbash/bridge/common/observable"
 
 	"github.com/sirupsen/logrus"
 )
