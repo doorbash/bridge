@@ -10,8 +10,6 @@ import (
 )
 
 func main() {
-	log.Info("this is ssr test")
-
 	ssrNode := make(map[string]interface{})
 	ssrNode["name"] = "ssr"
 	ssrNode["type"] = "ssr"
@@ -44,14 +42,14 @@ func main() {
 	}
 
 	url := "https://api.ipify.org/"
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
 	defer cancel()
 
-	body, latency, err := p.URLTest(ctx, url)
+	body, latency, err := p.URLTest(ctx, url, true)
 	if err != nil {
 		panic(err)
 	}
 
-	log.Info("response: %s\nlatency: %d ms", body, latency)
+	log.Info("%s\nlatency: %d ms", body, latency)
 
 }

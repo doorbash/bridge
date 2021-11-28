@@ -67,7 +67,7 @@ type ProxyAdapter interface {
 type Proxy interface {
 	ProxyAdapter
 	Dial(metadata *Metadata) (Conn, error)
-	URLTest(ctx context.Context, URL string) (string, uint16, error)
+	URLTest(ctx context.Context, URL string, resolveAddr bool) (string, uint16, error)
 }
 
 // AdapterType is enum of adapter type

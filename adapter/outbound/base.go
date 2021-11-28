@@ -5,11 +5,14 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
+	"log"
 	"net"
 	"net/http"
 	"time"
 
+	"github.com/doorbash/bridge/constant"
 	C "github.com/doorbash/bridge/constant"
 )
 
@@ -109,13 +112,61 @@ func (p *Proxy) DialContext(ctx context.Context, metadata *C.Metadata) (C.Conn, 
 }
 
 // URLTest get the delay for the specified URL, t ms
-func (p *Proxy) URLTest(ctx context.Context, URL string) (string, uint16, error) {
+func (p *Proxy) URLTest(ctx context.Context, URL string, resolveAddr bool) (string, uint16, error) {
 	metadata, err := urlToMetadata(URL)
 	if err != nil {
 		return "", 0, err
 	}
 
+	resolver := &net.Resolver{
+		PreferGo: true,
+		Dial: func(ctx context.Context, network, address string) (net.Conn, error) {
+			md := &C.Metadata{
+				AddrType: C.ATypIPv4,
+				NetWork:  C.UDP,
+				DstIP:    net.IPv4(8, 8, 8, 8),
+				DstPort:  "53",
+			}
+
+			pk, err := p.DialUDP(md)
+
+			if err != nil {
+				log.Println(err)
+				return nil, err
+			}
+
+			addr := &net.UDPAddr{
+				IP:   md.DstIP,
+				Port: 53,
+			}
+
+			return constant.UdpConn{
+				pk,
+				addr,
+			}, nil
+		},
+	}
+
 	dialContext := func(ctx context.Context, network, addr string) (net.Conn, error) {
+		if resolveAddr && !metadata.Resolved() {
+			log.Println("resolving", metadata.Host)
+			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+			defer cancel()
+			ips, err := resolver.LookupIP(ctx, "ip", metadata.Host)
+			if err != nil {
+				return nil, err
+			}
+			if len(ips) == 0 {
+				return nil, fmt.Errorf("no address associated with this domain %s", metadata.Host)
+			}
+			metadata.DstIP = ips[0]
+			metadata.Host = ""
+			if len(metadata.DstIP) == net.IPv4len {
+				metadata.AddrType = C.ATypIPv4
+			} else {
+				metadata.AddrType = C.ATypIPv6
+			}
+		}
 		c, err := p.Dial(&metadata)
 		if err != nil {
 			return nil, err

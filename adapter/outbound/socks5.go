@@ -58,6 +58,7 @@ func (ss *Socks5) StreamConn(c net.Conn, metadata *C.Metadata) (net.Conn, error)
 }
 
 func (ss *Socks5) DialContext(ctx context.Context, metadata *C.Metadata) (C.Conn, error) {
+	// log.Printf("Socks5: DialContext %s ...\n", metadata.RemoteAddress())
 	con, err := ss.dialer.DialContext(ctx, ss.addrMetadata)
 	if err != nil {
 		return nil, err
@@ -70,6 +71,7 @@ func (ss *Socks5) DialContext(ctx context.Context, metadata *C.Metadata) (C.Conn
 }
 
 func (ss *Socks5) DialUDP(metadata *C.Metadata) (_ C.PacketConn, err error) {
+	// log.Printf("Socks5: DialUDP %s ...\n", metadata.RemoteAddress())
 	ctx, cancel := context.WithTimeout(context.Background(), tcpTimeout)
 	defer cancel()
 	con, err := ss.dialer.DialContext(ctx, ss.addrMetadata)
@@ -82,6 +84,8 @@ func (ss *Socks5) DialUDP(metadata *C.Metadata) (_ C.PacketConn, err error) {
 		cc := tls.Client(con, ss.tlsConfig)
 		err = cc.Handshake()
 		c = cc
+	} else {
+		c = con
 	}
 
 	defer func() {
@@ -99,6 +103,7 @@ func (ss *Socks5) DialUDP(metadata *C.Metadata) (_ C.PacketConn, err error) {
 	}
 
 	bindAddr, err := socks5.ClientHandshake(c, serializesSocksAddr(metadata), socks5.CmdUDPAssociate, user)
+
 	if err != nil {
 		err = fmt.Errorf("client hanshake error: %w", err)
 		return

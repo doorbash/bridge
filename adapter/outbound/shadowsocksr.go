@@ -50,6 +50,7 @@ func (ssr *ShadowSocksR) StreamConn(c net.Conn, metadata *C.Metadata) (net.Conn,
 }
 
 func (ssr *ShadowSocksR) DialContext(ctx context.Context, metadata *C.Metadata) (C.Conn, error) {
+	// log.Printf("ShadowSocksR: DialContext %s ...\n", metadata.RemoteAddress())
 	con, err := ssr.dialer.DialContext(ctx, ssr.addrMetadata)
 	if err != nil {
 		return nil, err
@@ -59,6 +60,7 @@ func (ssr *ShadowSocksR) DialContext(ctx context.Context, metadata *C.Metadata) 
 }
 
 func (ssr *ShadowSocksR) DialUDP(metadata *C.Metadata) (C.PacketConn, error) {
+	// log.Printf("ShadowSocksR: DialUDP %s ...\n", metadata.RemoteAddress())
 	pk, err := ssr.dialer.DialUDP(ssr.addrMetadata)
 	if err != nil {
 		return nil, err

@@ -2,7 +2,6 @@ package outbound
 
 import (
 	"context"
-	"log"
 
 	"fmt"
 	"net"
@@ -20,7 +19,7 @@ func (d *Direct) StreamConn(c net.Conn, metadata *C.Metadata) (net.Conn, error) 
 }
 
 func (d *Direct) DialContext(ctx context.Context, metadata *C.Metadata) (C.Conn, error) {
-	log.Printf("Direct: dialing %s ....\n", metadata.RemoteAddress())
+	// log.Printf("Direct: DialContext %s ....\n", metadata.RemoteAddress())
 	c, err := dialer.DialContext(ctx, "tcp", metadata.RemoteAddress())
 	if err != nil {
 		return nil, fmt.Errorf("%s connect error: %w", d.addr, err)
@@ -30,6 +29,7 @@ func (d *Direct) DialContext(ctx context.Context, metadata *C.Metadata) (C.Conn,
 }
 
 func (d *Direct) DialUDP(metadata *C.Metadata) (C.PacketConn, error) {
+	// log.Printf("Direct: DialUDP %s ....\n", metadata.RemoteAddress())
 	pc, err := dialer.ListenPacket("udp", "")
 	if err != nil {
 		return nil, err
