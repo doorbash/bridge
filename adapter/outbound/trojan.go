@@ -7,7 +7,6 @@ import (
 	"net"
 	"strconv"
 
-	"github.com/doorbash/bridge/component/dialer"
 	"github.com/doorbash/bridge/component/trojan"
 	C "github.com/doorbash/bridge/constant"
 )
@@ -39,28 +38,25 @@ func (t *Trojan) StreamConn(c net.Conn, metadata *C.Metadata) (net.Conn, error) 
 }
 
 func (t *Trojan) DialContext(ctx context.Context, metadata *C.Metadata) (C.Conn, error) {
-	c, err := dialer.DialContext(ctx, "tcp", t.addr)
-	if err != nil {
-		return nil, fmt.Errorf("%s connect error: %w", t.addr, err)
-	}
-	tcpKeepAlive(c)
-	c, err = t.StreamConn(c, metadata)
+	con, err := t.dialer.DialContext(ctx, t.addrMetadata)
 	if err != nil {
 		return nil, err
 	}
-
+	c, err := t.StreamConn(con, metadata)
+	if err != nil {
+		return nil, err
+	}
 	return NewConn(c, t), err
 }
 
 func (t *Trojan) DialUDP(metadata *C.Metadata) (C.PacketConn, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), tcpTimeout)
 	defer cancel()
-	c, err := dialer.DialContext(ctx, "tcp", t.addr)
+	con, err := t.dialer.DialContext(ctx, t.addrMetadata)
 	if err != nil {
-		return nil, fmt.Errorf("%s connect error: %w", t.addr, err)
+		return nil, err
 	}
-	tcpKeepAlive(c)
-	c, err = t.instance.StreamConn(c)
+	c, err := t.instance.StreamConn(con)
 	if err != nil {
 		return nil, fmt.Errorf("%s connect error: %w", t.addr, err)
 	}
@@ -95,7 +91,7 @@ func NewTrojan(option TrojanOption) (*Trojan, error) {
 		tOption.ServerName = option.SNI
 	}
 
-	return &Trojan{
+	t := &Trojan{
 		Base: &Base{
 			name: option.Name,
 			addr: addr,
@@ -103,5 +99,10 @@ func NewTrojan(option TrojanOption) (*Trojan, error) {
 			udp:  option.UDP,
 		},
 		instance: trojan.New(tOption),
-	}, nil
+	}
+
+	var err error
+	t.addrMetadata, err = C.NewMetadata(addr)
+
+	return t, err
 }

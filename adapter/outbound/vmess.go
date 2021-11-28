@@ -9,7 +9,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/doorbash/bridge/component/dialer"
 	"github.com/doorbash/bridge/component/resolver"
 	"github.com/doorbash/bridge/component/vmess"
 	C "github.com/doorbash/bridge/constant"
@@ -155,13 +154,11 @@ func (v *Vmess) StreamConn(c net.Conn, metadata *C.Metadata) (net.Conn, error) {
 }
 
 func (v *Vmess) DialContext(ctx context.Context, metadata *C.Metadata) (C.Conn, error) {
-	c, err := dialer.DialContext(ctx, "tcp", v.addr)
+	con, err := v.dialer.DialContext(ctx, v.addrMetadata)
 	if err != nil {
-		return nil, fmt.Errorf("%s connect error: %s", v.addr, err.Error())
+		return nil, err
 	}
-	tcpKeepAlive(c)
-
-	c, err = v.StreamConn(c, metadata)
+	c, err := v.StreamConn(con, metadata)
 	return NewConn(c, v), err
 }
 
@@ -174,15 +171,13 @@ func (v *Vmess) DialUDP(metadata *C.Metadata) (C.PacketConn, error) {
 		}
 		metadata.DstIP = ip
 	}
-
 	ctx, cancel := context.WithTimeout(context.Background(), tcpTimeout)
 	defer cancel()
-	c, err := dialer.DialContext(ctx, "tcp", v.addr)
+	con, err := v.dialer.DialContext(ctx, v.addrMetadata)
 	if err != nil {
-		return nil, fmt.Errorf("%s connect error: %s", v.addr, err.Error())
+		return nil, err
 	}
-	tcpKeepAlive(c)
-	c, err = v.StreamConn(c, metadata)
+	c, err := v.StreamConn(con, metadata)
 	if err != nil {
 		return nil, fmt.Errorf("new vmess client error: %v", err)
 	}
@@ -205,7 +200,7 @@ func NewVmess(option VmessOption) (*Vmess, error) {
 		return nil, fmt.Errorf("TLS must be true with h2 network")
 	}
 
-	return &Vmess{
+	v := &Vmess{
 		Base: &Base{
 			name: option.Name,
 			addr: net.JoinHostPort(option.Server, strconv.Itoa(option.Port)),
@@ -214,7 +209,11 @@ func NewVmess(option VmessOption) (*Vmess, error) {
 		},
 		client: client,
 		option: &option,
-	}, nil
+	}
+
+	v.addrMetadata, err = C.NewMetadata(v.Base.addr)
+
+	return v, err
 }
 
 func parseVmessAddr(metadata *C.Metadata) *vmess.DstAddr {

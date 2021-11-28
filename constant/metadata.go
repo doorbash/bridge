@@ -74,3 +74,26 @@ func (m *Metadata) String() string {
 func (m *Metadata) Valid() bool {
 	return m.Host != "" || m.DstIP != nil
 }
+
+func NewMetadata(addr string) (*Metadata, error) {
+	md := &Metadata{}
+	host, port, err := net.SplitHostPort(addr)
+	if err != nil {
+		return nil, err
+	}
+	ip := net.ParseIP(host)
+	if ip == nil {
+		md.Host = host
+	} else {
+		ipv4 := ip.To4()
+		if ipv4 != nil {
+			md.DstIP = ipv4
+			md.AddrType = ATypIPv4
+		} else {
+			md.DstIP = ip
+			md.AddrType = ATypIPv6
+		}
+	}
+	md.DstPort = port
+	return md, nil
+}

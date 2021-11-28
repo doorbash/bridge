@@ -6,7 +6,6 @@ import (
 	"net"
 	"strconv"
 
-	"github.com/doorbash/bridge/component/dialer"
 	"github.com/doorbash/bridge/component/ssr/obfs"
 	"github.com/doorbash/bridge/component/ssr/protocol"
 	C "github.com/doorbash/bridge/constant"
@@ -51,28 +50,24 @@ func (ssr *ShadowSocksR) StreamConn(c net.Conn, metadata *C.Metadata) (net.Conn,
 }
 
 func (ssr *ShadowSocksR) DialContext(ctx context.Context, metadata *C.Metadata) (C.Conn, error) {
-	c, err := dialer.DialContext(ctx, "tcp", ssr.addr)
+	con, err := ssr.dialer.DialContext(ctx, ssr.addrMetadata)
 	if err != nil {
-		return nil, fmt.Errorf("%s connect error: %w", ssr.addr, err)
+		return nil, err
 	}
-	tcpKeepAlive(c)
-
-	c, err = ssr.StreamConn(c, metadata)
+	c, err := ssr.StreamConn(con, metadata)
 	return NewConn(c, ssr), err
 }
 
 func (ssr *ShadowSocksR) DialUDP(metadata *C.Metadata) (C.PacketConn, error) {
-	pc, err := dialer.ListenPacket("udp", "")
+	pk, err := ssr.dialer.DialUDP(ssr.addrMetadata)
 	if err != nil {
 		return nil, err
 	}
-
 	addr, err := resolveUDPAddr("udp", ssr.addr)
 	if err != nil {
 		return nil, err
 	}
-
-	pc = ssr.cipher.PacketConn(pc)
+	pc := ssr.cipher.PacketConn(pk)
 	pc = protocol.NewPacketConn(pc, ssr.protocol)
 	return newPacketConn(&ssPacketConn{PacketConn: pc, rAddr: addr}, ssr), nil
 }
@@ -113,7 +108,7 @@ func NewShadowSocksR(option ShadowSocksROption) (*ShadowSocksR, error) {
 	}
 	protocol.SetOverhead(obfs.GetObfsOverhead() + protocol.GetProtocolOverhead())
 
-	return &ShadowSocksR{
+	ssr := &ShadowSocksR{
 		Base: &Base{
 			name: option.Name,
 			addr: addr,
@@ -123,5 +118,9 @@ func NewShadowSocksR(option ShadowSocksROption) (*ShadowSocksR, error) {
 		cipher:   ciph,
 		obfs:     obfs,
 		protocol: protocol,
-	}, nil
+	}
+
+	ssr.addrMetadata, err = C.NewMetadata(addr)
+
+	return ssr, err
 }

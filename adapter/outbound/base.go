@@ -5,17 +5,21 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"errors"
-	C "github.com/doorbash/bridge/constant"
+	"io/ioutil"
 	"net"
 	"net/http"
 	"time"
+
+	C "github.com/doorbash/bridge/constant"
 )
 
 type Base struct {
-	name string
-	addr string
-	tp   C.AdapterType
-	udp  bool
+	name         string
+	addr         string
+	addrMetadata *C.Metadata
+	tp           C.AdapterType
+	udp          bool
+	dialer       C.ProxyAdapter
 }
 
 func (b *Base) Name() string {
@@ -48,8 +52,12 @@ func (b *Base) Addr() string {
 	return b.addr
 }
 
-func NewBase(name string, addr string, tp C.AdapterType, udp bool) *Base {
-	return &Base{name, addr, tp, udp}
+func (b *Base) SetDialer(dialer C.ProxyAdapter) {
+	b.dialer = dialer
+}
+
+func NewBase(name string, addr string, tp C.AdapterType, udp bool, dialer C.Proxy) *Base {
+	return &Base{name, addr, nil, tp, udp, dialer}
 }
 
 type conn struct {
@@ -97,16 +105,14 @@ func (p *Proxy) Dial(metadata *C.Metadata) (C.Conn, error) {
 }
 
 func (p *Proxy) DialContext(ctx context.Context, metadata *C.Metadata) (C.Conn, error) {
-	conn, err := p.ProxyAdapter.DialContext(ctx, metadata)
-
-	return conn, err
+	return p.ProxyAdapter.DialContext(ctx, metadata)
 }
 
 // URLTest get the delay for the specified URL, t ms
-func (p *Proxy) URLTest(ctx context.Context, URL string) (t uint16, err error) {
+func (p *Proxy) URLTest(ctx context.Context, URL string) (string, uint16, error) {
 	metadata, err := urlToMetadata(URL)
 	if err != nil {
-		return 0, err
+		return "", 0, err
 	}
 
 	dialContext := func(ctx context.Context, network, addr string) (net.Conn, error) {
@@ -129,20 +135,26 @@ func (p *Proxy) URLTest(ctx context.Context, URL string) (t uint16, err error) {
 
 	req, err := http.NewRequest("GET", URL, nil)
 	if err != nil {
-		return 0, err
+		return "", 0, err
 	}
 
 	req = req.WithContext(ctx)
 	sTime := time.Now()
 	resp, err := client.Do(req)
 	if err != nil {
-		return 0, err
+		return "", 0, err
 	}
 
 	defer resp.Body.Close()
-	t = uint16(time.Since(sTime).Milliseconds())
+	t := uint16(time.Since(sTime).Milliseconds())
 
-	return t, nil
+	r, err := ioutil.ReadAll(resp.Body)
+
+	if err != nil {
+		return "", 0, err
+	}
+
+	return string(r), t, nil
 }
 
 func NewProxy(adapter C.ProxyAdapter) *Proxy {

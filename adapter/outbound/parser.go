@@ -19,6 +19,8 @@ func ParseProxy(mapping map[string]interface{}) (C.Proxy, error) {
 		err   error
 	)
 	switch proxyType {
+	case "direct":
+		proxy, err = NewDirect()
 	case "ss":
 		ssOption := &ShadowSocksOption{}
 		err = decoder.Decode(mapping, ssOption)
@@ -80,6 +82,10 @@ func ParseProxy(mapping map[string]interface{}) (C.Proxy, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	d, _ := NewDirect()
+
+	proxy.SetDialer(d)
 
 	return NewProxy(proxy), nil
 }

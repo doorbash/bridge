@@ -9,7 +9,6 @@ import (
 	"strconv"
 
 	"github.com/doorbash/bridge/common/structure"
-	"github.com/doorbash/bridge/component/dialer"
 	obfs "github.com/doorbash/bridge/component/simple-obfs"
 	"github.com/doorbash/bridge/component/socks5"
 	v2rayObfs "github.com/doorbash/bridge/component/v2ray-plugin"
@@ -74,28 +73,24 @@ func (ss *ShadowSocks) StreamConn(c net.Conn, metadata *C.Metadata) (net.Conn, e
 }
 
 func (ss *ShadowSocks) DialContext(ctx context.Context, metadata *C.Metadata) (C.Conn, error) {
-	c, err := dialer.DialContext(ctx, "tcp", ss.addr)
+	con, err := ss.dialer.DialContext(ctx, ss.addrMetadata)
 	if err != nil {
-		return nil, fmt.Errorf("%s connect error: %w", ss.addr, err)
+		return nil, err
 	}
-	tcpKeepAlive(c)
-
-	c, err = ss.StreamConn(c, metadata)
+	c, err := ss.StreamConn(con, metadata)
 	return NewConn(c, ss), err
 }
 
 func (ss *ShadowSocks) DialUDP(metadata *C.Metadata) (C.PacketConn, error) {
-	pc, err := dialer.ListenPacket("udp", "")
+	pk, err := ss.dialer.DialUDP(ss.addrMetadata)
 	if err != nil {
 		return nil, err
 	}
-
 	addr, err := resolveUDPAddr("udp", ss.addr)
 	if err != nil {
 		return nil, err
 	}
-
-	pc = ss.cipher.PacketConn(pc)
+	pc := ss.cipher.PacketConn(pk)
 	return newPacketConn(&ssPacketConn{PacketConn: pc, rAddr: addr}, ss), nil
 }
 
@@ -148,7 +143,7 @@ func NewShadowSocks(option ShadowSocksOption) (*ShadowSocks, error) {
 		}
 	}
 
-	return &ShadowSocks{
+	ss := &ShadowSocks{
 		Base: &Base{
 			name: option.Name,
 			addr: addr,
@@ -160,7 +155,11 @@ func NewShadowSocks(option ShadowSocksOption) (*ShadowSocks, error) {
 		obfsMode:    obfsMode,
 		v2rayOption: v2rayOption,
 		obfsOption:  obfsOption,
-	}, nil
+	}
+
+	ss.addrMetadata, err = C.NewMetadata(addr)
+
+	return ss, err
 }
 
 type ssPacketConn struct {

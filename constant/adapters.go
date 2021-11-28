@@ -15,6 +15,7 @@ const (
 	Http
 	Vmess
 	Trojan
+	Direct
 )
 
 type ServerAdapter interface {
@@ -60,12 +61,13 @@ type ProxyAdapter interface {
 	DialUDP(metadata *Metadata) (PacketConn, error)
 	SupportUDP() bool
 	Addr() string
+	SetDialer(dialer ProxyAdapter)
 }
 
 type Proxy interface {
 	ProxyAdapter
 	Dial(metadata *Metadata) (Conn, error)
-	URLTest(ctx context.Context, URL string) (uint16, error)
+	URLTest(ctx context.Context, URL string) (string, uint16, error)
 }
 
 // AdapterType is enum of adapter type
@@ -73,6 +75,8 @@ type AdapterType int
 
 func (at AdapterType) String() string {
 	switch at {
+	case Direct:
+		return "direct"
 	case Shadowsocks:
 		return "Shadowsocks"
 	case ShadowsocksR:

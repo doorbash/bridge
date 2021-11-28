@@ -10,7 +10,6 @@ import (
 	"net"
 	"strconv"
 
-	"github.com/doorbash/bridge/component/dialer"
 	"github.com/doorbash/bridge/component/socks5"
 	C "github.com/doorbash/bridge/constant"
 )
@@ -59,31 +58,28 @@ func (ss *Socks5) StreamConn(c net.Conn, metadata *C.Metadata) (net.Conn, error)
 }
 
 func (ss *Socks5) DialContext(ctx context.Context, metadata *C.Metadata) (C.Conn, error) {
-	c, err := dialer.DialContext(ctx, "tcp", ss.addr)
-	if err != nil {
-		return nil, fmt.Errorf("%s connect error: %w", ss.addr, err)
-	}
-	tcpKeepAlive(c)
-
-	c, err = ss.StreamConn(c, metadata)
+	con, err := ss.dialer.DialContext(ctx, ss.addrMetadata)
 	if err != nil {
 		return nil, err
 	}
-
+	c, err := ss.StreamConn(con, metadata)
+	if err != nil {
+		return nil, err
+	}
 	return NewConn(c, ss), nil
 }
 
 func (ss *Socks5) DialUDP(metadata *C.Metadata) (_ C.PacketConn, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), tcpTimeout)
 	defer cancel()
-	c, err := dialer.DialContext(ctx, "tcp", ss.addr)
+	con, err := ss.dialer.DialContext(ctx, ss.addrMetadata)
 	if err != nil {
-		err = fmt.Errorf("%s connect error: %w", ss.addr, err)
-		return
+		return nil, err
 	}
+	var c net.Conn
 
 	if ss.tls {
-		cc := tls.Client(c, ss.tlsConfig)
+		cc := tls.Client(con, ss.tlsConfig)
 		err = cc.Handshake()
 		c = cc
 	}
@@ -94,7 +90,6 @@ func (ss *Socks5) DialUDP(metadata *C.Metadata) (_ C.PacketConn, err error) {
 		}
 	}()
 
-	tcpKeepAlive(c)
 	var user *socks5.User
 	if ss.user != "" {
 		user = &socks5.User{
@@ -109,10 +104,13 @@ func (ss *Socks5) DialUDP(metadata *C.Metadata) (_ C.PacketConn, err error) {
 		return
 	}
 
-	pc, err := dialer.ListenPacket("udp", "")
+	md, err := C.NewMetadata(bindAddr.String())
+
 	if err != nil {
-		return
+		return nil, err
 	}
+
+	pc, err := ss.dialer.DialUDP(md)
 
 	go func() {
 		io.Copy(ioutil.Discard, c)
@@ -135,7 +133,7 @@ func NewSocks5(option Socks5Option) *Socks5 {
 		}
 	}
 
-	return &Socks5{
+	s := &Socks5{
 		Base: &Base{
 			name: option.Name,
 			addr: net.JoinHostPort(option.Server, strconv.Itoa(option.Port)),
@@ -148,6 +146,10 @@ func NewSocks5(option Socks5Option) *Socks5 {
 		skipCertVerify: option.SkipCertVerify,
 		tlsConfig:      tlsConfig,
 	}
+
+	s.addrMetadata, _ = C.NewMetadata(s.Base.addr)
+
+	return s
 }
 
 type socksPacketConn struct {
