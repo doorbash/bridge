@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	tcpTimeout = 5 * time.Second
+	tcpTimeout = 10 * time.Second
 )
 
 var (
